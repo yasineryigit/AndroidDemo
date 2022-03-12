@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Field {
 
-    @SerializedName("field_pk")
+    @SerializedName("fieldPk")
     private long fieldPk;
 
     @SerializedName("type")
@@ -13,7 +13,7 @@ public class Field {
     @SerializedName("name")
     private String name;
 
-    @SerializedName("number_row")
+    @SerializedName("rowNumber")
     private int rowNumber;
 
     @SerializedName("bold")

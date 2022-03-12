@@ -68,37 +68,38 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
         horizontalLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
         horizontalLinearLayout.setLayoutParams(horizontalLayoutParams);
         horizontalLinearLayout.setWeightSum(10f);
-
-        TextView tv1 = new TextView(getContext());
-        TextView tv2 = new TextView(getContext());
-        TextView tv3 = new TextView(getContext());
-        TextView tv4 = new TextView(getContext());
-
-        tv1.setText(fields.get(0).getName());
-        tv1.setTextColor(Color.parseColor(fields.get(0).getColor()));
-        tv1.setTypeface(null, fields.get(0).isBold() ? Typeface.BOLD : Typeface.NORMAL);
-        tv1.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f));
-
-        tv2.setText(String.valueOf(orders.get(position).getOrderNo()));
-        tv2.setTextColor(Color.parseColor(fields.get(1).getColor()));
-        tv2.setTypeface(null, fields.get(1).isBold() ? Typeface.BOLD : Typeface.NORMAL);
-        tv2.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f));
-
-        tv3.setText(String.valueOf(orders.get(position).getOrderTime()));
-        tv3.setTextColor(Color.parseColor(fields.get(2).getColor()));
-        tv3.setTypeface(null, fields.get(2).isBold() ? Typeface.BOLD : Typeface.NORMAL);
-        tv3.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 4f));
-
-        tv4.setText(orders.get(position).getClientInfo());
-        tv4.setTextColor(Color.parseColor(fields.get(3).getColor()));
-        tv4.setTypeface(null, fields.get(3).isBold() ? Typeface.BOLD : Typeface.NORMAL);
-        tv4.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        horizontalLinearLayout.addView(tv1);
-        horizontalLinearLayout.addView(tv2);
-        horizontalLinearLayout.addView(tv3);
         verticalLinearLayout.addView(horizontalLinearLayout);
-        verticalLinearLayout.addView(tv4);
+
+        for (Field field : fields) {//fieldları layout'a yerleştir
+            TextView textView = new TextView(getContext());
+            textView.setTextColor(Color.parseColor(field.getColor()));
+            textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
+
+
+            if (field.getType().equals("Static")) {
+                textView.setText(field.getName());
+            } else if (field.getType().equals("Data")) {
+                switch (field.getName()) {
+                    case "ORDERNO":
+                        textView.setText(String.valueOf(order.getOrderNo()));
+                        break;
+                    case "DATE":
+                        textView.setText(String.valueOf(order.getOrderTime()));
+                        break;
+                    case "CLIENTINFO":
+                        textView.setText(String.valueOf(order.getClientInfo()));
+                        break;
+                }
+            }
+            if (field.getRowNumber() == 1) {
+                horizontalLinearLayout.addView(textView);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / fields.size()));
+            } else if (field.getRowNumber() == 2) {
+                verticalLinearLayout.addView(textView);
+                textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / fields.size()));
+            }
+        }
+
 
 
 
