@@ -58,93 +58,96 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
 
             holder = new ViewHolder();
             holder.verticalLinearLayout = convertView.findViewById(R.id.verticalLinearLayout);
+
+
+            Order order = orders.get(position);
+            if (order != null) {
+
+                LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT
+                );
+
+                holder.verticalLinearLayout.setOrientation(LinearLayout.VERTICAL);
+                holder.verticalLinearLayout.setLayoutParams(verticalLayoutParams);
+                holder.verticalLinearLayout.setWeightSum(10f);
+
+                LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+                Field element = Collections.max(fields, Comparator.comparingInt(Field::getRowNumber));
+                int[] weightArray = new int[element.getRowNumber()]; // combining both statements in one
+
+                for (Field field : fields) {
+                    weightArray[field.getRowNumber() - 1]++;
+                }
+                for (int i = 0; i < weightArray.length; i++) {
+                    Log.d(TAG, "getView: weightArray:" + i + " numaralı indexte " + weightArray[i] + " adet eleman var");
+                }
+
+                Log.d(TAG, "getView: max row:" + element.getRowNumber());
+
+                //kaç tane row varsa o kadar horizontal layout oluştur
+                for (int i = 0; i < element.getRowNumber(); i++) {
+                    LinearLayout myHorizontalLinearLayout = new LinearLayout(getContext());
+                    myHorizontalLinearLayout.setId(i);
+                    myHorizontalLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                    horizontalLayoutParams.setMargins(30, 30, 30, 30);
+                    myHorizontalLinearLayout.setLayoutParams(horizontalLayoutParams);
+                    myHorizontalLinearLayout.setWeightSum(10f);
+
+                    holder.verticalLinearLayout.addView(myHorizontalLinearLayout);
+                }
+
+                for (Field field : fields) {//fieldları layout'a yerleştir
+                    TextView textView = new TextView(getContext());
+                    textView.setTextColor(Color.parseColor(field.getColor()));
+                    textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
+
+                    //setText
+                    if (field.getType().equals("Static")) {
+                        textView.setText(field.getName());
+                    } else if (field.getType().equals("Data")) {
+                        switch (field.getName()) {
+                            case "ORDERNO":
+                                textView.setText(String.valueOf(order.getOrderNo()));
+                                break;
+                            case "DATE":
+                                textView.setText(String.valueOf(order.getOrderTime()));
+                                break;
+                            case "CLIENTINFO":
+                                textView.setText(String.valueOf(order.getClientInfo()));
+                                break;
+                            case "ORDERPRICE":
+                                textView.setText(String.valueOf(order.getOrderPrice()));
+                                break;
+                        }
+                    }
+                    //hazırlanan textView'i ilgili horizontalLayout'a ekle
+                    textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / weightArray[field.getRowNumber() - 1]));
+                    Log.d(TAG, "getView: vertical layout child number:" + holder.verticalLinearLayout.getChildCount());
+                    LinearLayout horizontalLinearLayout = (LinearLayout) holder.verticalLinearLayout.getChildAt(field.getRowNumber() - 1);
+                    System.out.println("addView linlayout:" + horizontalLinearLayout);
+                    horizontalLinearLayout.addView(textView);
+
+                }
+            }
+
             convertView.setTag(holder);
 
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Order order = orders.get(position);
-        if (order != null) {
-
-            LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT
-            );
-
-            holder.verticalLinearLayout.setOrientation(LinearLayout.VERTICAL);
-            holder.verticalLinearLayout.setLayoutParams(verticalLayoutParams);
-            holder.verticalLinearLayout.setWeightSum(10f);
-
-            LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-
-            Field element = Collections.max(fields, Comparator.comparingInt(Field::getRowNumber));
-            int[] weightArray = new int[element.getRowNumber()]; // combining both statements in one
-
-            for (Field field : fields) {
-                weightArray[field.getRowNumber() - 1]++;
-            }
-            for (int i = 0; i < weightArray.length; i++) {
-                Log.d(TAG, "getView: weightArray:" + i + " numaralı indexte " + weightArray[i] + " adet eleman var");
-            }
-
-            Log.d(TAG, "getView: max row:" + element.getRowNumber());
-
-            //kaç tane row varsa o kadar horizontal layout oluştur
-            for (int i = 0; i < element.getRowNumber(); i++) {
-                LinearLayout myHorizontalLinearLayout = new LinearLayout(getContext());
-                myHorizontalLinearLayout.setId(i);
-                myHorizontalLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                horizontalLayoutParams.setMargins(30, 30, 30, 30);
-                myHorizontalLinearLayout.setLayoutParams(horizontalLayoutParams);
-                myHorizontalLinearLayout.setWeightSum(10f);
-
-                holder.verticalLinearLayout.addView(myHorizontalLinearLayout);
-            }
-
-            for (Field field : fields) {//fieldları layout'a yerleştir
-                TextView textView = new TextView(getContext());
-                textView.setTextColor(Color.parseColor(field.getColor()));
-                textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
-
-                //setText
-                if (field.getType().equals("Static")) {
-                    textView.setText(field.getName());
-                } else if (field.getType().equals("Data")) {
-                    switch (field.getName()) {
-                        case "ORDERNO":
-                            textView.setText(String.valueOf(order.getOrderNo()));
-                            break;
-                        case "DATE":
-                            textView.setText(String.valueOf(order.getOrderTime()));
-                            break;
-                        case "CLIENTINFO":
-                            textView.setText(String.valueOf(order.getClientInfo()));
-                            break;
-                        case "ORDERPRICE":
-                            textView.setText(String.valueOf(order.getOrderPrice()));
-                            break;
-                    }
-                }
-                //hazırlanan textView'i ilgili horizontalLayout'a ekle
-                textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / weightArray[field.getRowNumber() - 1]));
-                Log.d(TAG, "getView: vertical layout child number:" + holder.verticalLinearLayout.getChildCount());
-                LinearLayout horizontalLinearLayout = (LinearLayout) holder.verticalLinearLayout.getChildAt(field.getRowNumber() - 1);
-                System.out.println("addView linlayout:" + horizontalLinearLayout);
-                horizontalLinearLayout.addView(textView);
-
-            }
-        }
 
         return convertView;
     }
 
     @Override
     public int getCount() {
-        return super.getCount();
+        return orders.size();
     }
 
     @Nullable
