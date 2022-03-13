@@ -16,6 +16,9 @@ public class Order {
     @SerializedName("clientInfo")
     private String clientInfo;
 
+    @SerializedName("orderPrice")
+    private int orderPrice;
+
     public long getOrderPk() {
         return orderPk;
     }
@@ -48,5 +51,11 @@ public class Order {
         this.clientInfo = clientInfo;
     }
 
+    public int getOrderPrice() {
+        return orderPrice;
+    }
 
+    public void setOrderPrice(int orderPrice) {
+        this.orderPrice = orderPrice;
+    }
 }

@@ -20,7 +20,6 @@ import com.ossovita.pronicdemo.R;
 import com.ossovita.pronicdemo.model.Field;
 import com.ossovita.pronicdemo.model.Order;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -55,12 +54,13 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
         }
 
         LinearLayout verticalLinearLayout = convertView.findViewById(R.id.verticalLinearLayout);
-        LinearLayout.LayoutParams verticalLayoutparams = new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
         );
+
         verticalLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        verticalLinearLayout.setLayoutParams(verticalLayoutparams);
+        verticalLinearLayout.setLayoutParams(verticalLayoutParams);
         verticalLinearLayout.setWeightSum(10f);
 
         LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
@@ -69,6 +69,15 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
         );
 
         Field element = Collections.max(fields, Comparator.comparingInt(Field::getRowNumber));
+        int[] weightArray = new int[element.getRowNumber()]; // combining both statements in one
+
+        for (Field field : fields) {
+            weightArray[field.getRowNumber() - 1]++;
+        }
+        for (int i = 0; i < weightArray.length; i++) {
+            Log.d(TAG, "getView: weightArray:" + i +  " numaralı index" +  weightArray[i]);
+        }
+
         Log.d(TAG, "getView: max row:" + element.getRowNumber());
 
         //kaç tane row varsa o kadar horizontal layout oluştur
@@ -76,12 +85,11 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
             LinearLayout myHorizontalLinearLayout = new LinearLayout(getContext());
             myHorizontalLinearLayout.setId(i);
             myHorizontalLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            horizontalLayoutParams.setMargins(30, 30, 30, 30);
             myHorizontalLinearLayout.setLayoutParams(horizontalLayoutParams);
             myHorizontalLinearLayout.setWeightSum(10f);
 
-
             verticalLinearLayout.addView(myHorizontalLinearLayout);
-
         }
 
         for (Field field : fields) {//fieldları layout'a yerleştir
@@ -103,28 +111,19 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                     case "CLIENTINFO":
                         textView.setText(String.valueOf(order.getClientInfo()));
                         break;
+                    case "ORDERPRICE":
+                        textView.setText(String.valueOf(order.getOrderPrice()));
+                        break;
                 }
             }
             //hazırlanan textView'i ilgili horizontalLayout'a ekle
-            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / fields.size()));
+            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f /  weightArray[field.getRowNumber() - 1]));
             Log.d(TAG, "getView: vertical layout child number:" + verticalLinearLayout.getChildCount());
             LinearLayout linearLayout = (LinearLayout) verticalLinearLayout.getChildAt(field.getRowNumber() - 1);
             System.out.println("addView linlayout:" + linearLayout);
             linearLayout.addView(textView);
 
-
-            /*if (field.getRowNumber() == 1) {
-                horizontalLinearLayout.addView(textView);
-                textView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / fields.size()));
-            } else if (field.getRowNumber() == 2) {
-                verticalLinearLayout.addView(textView);
-                textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / fields.size()));
-            }*/
-
         }
-
-        //horizontal layout list elemanlarını vertical linear layout'a ekle
-
 
         return verticalLinearLayout;
     }
