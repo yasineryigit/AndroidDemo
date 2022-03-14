@@ -58,7 +58,6 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
 
             Order order = orders.get(position);
 
-
             if (order != null) {
                 LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,

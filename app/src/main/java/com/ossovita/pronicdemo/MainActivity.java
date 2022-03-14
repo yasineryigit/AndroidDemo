@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         MyApi myApi = ApiService.getInstanceForApi().create(MyApi.class);
 
+        //get design details list
         myApi.getAllFields().enqueue(new Callback<List<Field>>() {
             @Override
             public void onResponse(Call<List<Field>> call, Response<List<Field>> response) {
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "onResponse: " + response.body());
                     fields = response.body();
 
+                    //get order list
                     myApi.getAllOrders().enqueue(new Callback<List<Order>>() {
                         @Override
                         public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d(TAG, "onResponse: gelen order list" + response.body());
                                 orders = response.body();
                                 Log.d(TAG, "onResponse: giden orders: " + orders.size());
-                                OrderListAdapter orderListAdapter = new OrderListAdapter(MainActivity.this,  orders,fields);
+                                OrderListAdapter orderListAdapter = new OrderListAdapter(MainActivity.this, orders, fields);
                                 listView.setAdapter(orderListAdapter);
 
                             } else {
@@ -72,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onFailure: error:" + t.getMessage());
             }
         });
-
-        //fetch orders
 
 
     }
