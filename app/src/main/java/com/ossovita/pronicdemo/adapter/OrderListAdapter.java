@@ -28,13 +28,12 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
 
     private static final String TAG = "OrderListAdapter";
     private Context context;
-    private final LayoutInflater inflater;
-    private ViewHolder holder;
     private List<Order> orders;
     private List<Field> fields;
+    private ViewHolder holder;
 
     private static class ViewHolder {
-        LinearLayout verticalLinearLayout;
+        public LinearLayout verticalLinearLayout;
     }
 
     public OrderListAdapter(@NonNull Context context, List<Order> orders, List<Field> fields) {
@@ -42,7 +41,6 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
         this.context = context;
         this.orders = orders;
         this.fields = fields;
-        inflater = LayoutInflater.from(context);
         Log.d(TAG, "OrderListAdapter: kullanılacak fields:" + fields.size() + " orders: " + orders.size());
     }
 
@@ -51,18 +49,17 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-
-        LayoutInflater inflater = LayoutInflater.from(context);
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.adapter_view_layout, parent, false);
-
+            convertView = LayoutInflater.from(context).inflate(R.layout.adapter_view_layout, null);
             holder = new ViewHolder();
+
+            //define rootLayout
             holder.verticalLinearLayout = convertView.findViewById(R.id.verticalLinearLayout);
 
-
             Order order = orders.get(position);
-            if (order != null) {
 
+
+            if (order != null) {
                 LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT
@@ -77,19 +74,23 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                         LinearLayout.LayoutParams.WRAP_CONTENT
                 );
 
+                //Find max row number & create weight array(which holds how many textView will place in a horizontal layout)
                 Field element = Collections.max(fields, Comparator.comparingInt(Field::getRowNumber));
-                int[] weightArray = new int[element.getRowNumber()]; // combining both statements in one
+                int[] weightArray = new int[element.getRowNumber()];
 
+                //assign values to weightArray indexes
                 for (Field field : fields) {
                     weightArray[field.getRowNumber() - 1]++;
                 }
+
+                //logging values inside of weightArray @REMOVABLE
                 for (int i = 0; i < weightArray.length; i++) {
                     Log.d(TAG, "getView: weightArray:" + i + " numaralı indexte " + weightArray[i] + " adet eleman var");
                 }
-
                 Log.d(TAG, "getView: max row:" + element.getRowNumber());
 
-                //kaç tane row varsa o kadar horizontal layout oluştur
+
+                //Create horizontal linear layouts for max row number count & add these horizontal linear layouts into root vertical linear layout
                 for (int i = 0; i < element.getRowNumber(); i++) {
                     LinearLayout myHorizontalLinearLayout = new LinearLayout(getContext());
                     myHorizontalLinearLayout.setId(i);
@@ -101,7 +102,8 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                     holder.verticalLinearLayout.addView(myHorizontalLinearLayout);
                 }
 
-                for (Field field : fields) {//fieldları layout'a yerleştir
+                //Place fields as text view into horizontal linear layouts
+                for (Field field : fields) {
                     TextView textView = new TextView(getContext());
                     textView.setTextColor(Color.parseColor(field.getColor()));
                     textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
@@ -125,22 +127,21 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                                 break;
                         }
                     }
-                    //hazırlanan textView'i ilgili horizontalLayout'a ekle
+                    //Set text view layout weight
                     textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / weightArray[field.getRowNumber() - 1]));
                     Log.d(TAG, "getView: vertical layout child number:" + holder.verticalLinearLayout.getChildCount());
+                    //Add textViews into related horizontal linear layout
                     LinearLayout horizontalLinearLayout = (LinearLayout) holder.verticalLinearLayout.getChildAt(field.getRowNumber() - 1);
-                    System.out.println("addView linlayout:" + horizontalLinearLayout);
+                    System.out.println("addView linearLayout:" + horizontalLinearLayout);
                     horizontalLinearLayout.addView(textView);
 
                 }
+
+                convertView.setTag(holder);
             }
-
-            convertView.setTag(holder);
-
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
 
         return convertView;
     }
@@ -148,6 +149,16 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
     @Override
     public int getCount() {
         return orders.size();
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return getCount();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     @Nullable
