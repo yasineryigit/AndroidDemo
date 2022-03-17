@@ -1,17 +1,20 @@
 package com.ossovita.pronicdemo.model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Item {
 
 
     @SerializedName("name")
-    @Expose
     private String name;
+
     @SerializedName("value")
-    @Expose
     private Object value;
+
+    public Item(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
 
     public String getName() {
         return name;

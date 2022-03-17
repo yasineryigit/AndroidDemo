@@ -8,8 +8,11 @@ import java.util.List;
 public class OrderData {
 
     @SerializedName("itemList")
-    @Expose
     private List<Item> itemList = null;
+
+    public OrderData(List<Item> itemList) {
+        this.itemList = itemList;
+    }
 
     public List<Item> getItemList() {
         return itemList;
