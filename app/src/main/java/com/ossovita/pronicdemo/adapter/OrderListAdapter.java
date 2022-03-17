@@ -51,28 +51,23 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.adapter_view_layout, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.adapter_view_layout, parent, false);
             holder = new ViewHolder();
 
             //define rootLayout
+            LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT
+            );
             holder.verticalLinearLayout = convertView.findViewById(R.id.verticalLinearLayout);
+            holder.verticalLinearLayout.setOrientation(LinearLayout.VERTICAL);
+            holder.verticalLinearLayout.setLayoutParams(verticalLayoutParams);
+            holder.verticalLinearLayout.setWeightSum(10f);
+
 
             OrderData orderData = this.orderData.get(position);
 
             if (orderData != null) {
-                LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                );
-
-                holder.verticalLinearLayout.setOrientation(LinearLayout.VERTICAL);
-                holder.verticalLinearLayout.setLayoutParams(verticalLayoutParams);
-                holder.verticalLinearLayout.setWeightSum(10f);
-
-                LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                );
 
                 //Find max row number & create weight array(which holds how many textView will place in a horizontal layout)
                 Field element = Collections.max(fields, Comparator.comparingInt(Field::getRowNumber));
@@ -92,14 +87,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
 
                 //Create horizontal linear layouts for max row number count & add these horizontal linear layouts into root vertical linear layout
                 for (int i = 0; i < element.getRowNumber(); i++) {
-                    LinearLayout myHorizontalLinearLayout = new LinearLayout(getContext());
-                    myHorizontalLinearLayout.setId(i);
-                    myHorizontalLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                    horizontalLayoutParams.setMargins(30, 30, 30, 30);
-                    myHorizontalLinearLayout.setLayoutParams(horizontalLayoutParams);
-                    myHorizontalLinearLayout.setWeightSum(10f);
-
-                    holder.verticalLinearLayout.addView(myHorizontalLinearLayout);
+                    holder.verticalLinearLayout.addView(createHorizontalLinearLayout());
                 }
 
                 //Place fields as text view into horizontal linear layouts
@@ -109,11 +97,15 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                     textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
                     //Dataları doldurma zamanı
                     for (Item item : orderData.getItemList()) {
-
                         if (field.getType().equals("Static")) {
                             textView.setText(field.getName());
                         } else if (field.getType().equals("Data")) {
                             if (field.getName().equals(item.getName())) {
+                                /*//format date
+                                if (field.getName().equals("DATE")) {
+                                    Object value = item.getValue();
+                                    Log.d(TAG, "getView: formatlanacak tarih:" + value);
+                                }*/
                                 Object value = item.getValue();
                                 if (value instanceof Double) {
                                     value = ((Double) value).intValue();
@@ -122,6 +114,8 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                             }
                         }
                     }
+
+
                     //Set text view layout weight
                     textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / weightArray[field.getRowNumber() - 1]));
                     Log.d(TAG, "getView: vertical layout child number:" + holder.verticalLinearLayout.getChildCount());
@@ -132,7 +126,6 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                     horizontalLinearLayout.addView(textView);
 
                 }
-
                 convertView.setTag(holder);
             }
         } else {
@@ -140,6 +133,19 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
         }
 
         return convertView;
+    }
+
+    private LinearLayout createHorizontalLinearLayout() {
+        LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        LinearLayout myHorizontalLinearLayout = new LinearLayout(getContext());
+        myHorizontalLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        horizontalLayoutParams.setMargins(30, 30, 30, 30);
+        myHorizontalLinearLayout.setLayoutParams(horizontalLayoutParams);
+        myHorizontalLinearLayout.setWeightSum(10f);
+        return myHorizontalLinearLayout;
     }
 
     @Override
