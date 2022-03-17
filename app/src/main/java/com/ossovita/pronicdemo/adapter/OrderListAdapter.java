@@ -19,17 +19,17 @@ import androidx.annotation.RequiresApi;
 import com.ossovita.pronicdemo.R;
 import com.ossovita.pronicdemo.model.Field;
 import com.ossovita.pronicdemo.model.Item;
-import com.ossovita.pronicdemo.model.Order;
+import com.ossovita.pronicdemo.model.OrderData;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class OrderListAdapter extends ArrayAdapter<Order> {
+public class OrderListAdapter extends ArrayAdapter<OrderData> {
 
     private static final String TAG = "OrderListAdapter";
     private Context context;
-    private List<Order> orders;
+    private List<OrderData> orderData;
     private List<Field> fields;
     private ViewHolder holder;
 
@@ -37,12 +37,12 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
         public LinearLayout verticalLinearLayout;
     }
 
-    public OrderListAdapter(@NonNull Context context, List<Order> orders, List<Field> fields) {
-        super(context, R.layout.adapter_view_layout, orders);
+    public OrderListAdapter(@NonNull Context context, List<OrderData> orderData, List<Field> fields) {
+        super(context, R.layout.adapter_view_layout, orderData);
         this.context = context;
-        this.orders = orders;
+        this.orderData = orderData;
         this.fields = fields;
-        Log.d(TAG, "OrderListAdapter: kullanılacak fields:" + fields.size() + " orders: " + orders.size());
+        Log.d(TAG, "OrderListAdapter: kullanılacak fields:" + fields.size() + " orders: " + orderData.size());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -57,9 +57,9 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
             //define rootLayout
             holder.verticalLinearLayout = convertView.findViewById(R.id.verticalLinearLayout);
 
-            Order order = orders.get(position);
+            OrderData orderData = this.orderData.get(position);
 
-            if (order != null) {
+            if (orderData != null) {
                 LinearLayout.LayoutParams verticalLayoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT
@@ -108,7 +108,7 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                     textView.setTextColor(Color.parseColor(field.getColor()));
                     textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
                     //Dataları doldurma zamanı
-                    for (Item item : order.getItemList()) {
+                    for (Item item : orderData.getItemList()) {
 
                         if (field.getType().equals("Static")) {
                             textView.setText(field.getName());
@@ -144,7 +144,7 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
 
     @Override
     public int getCount() {
-        return orders.size();
+        return orderData.size();
     }
 
     @Override
@@ -159,7 +159,7 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
 
     @Nullable
     @Override
-    public Order getItem(int position) {
+    public OrderData getItem(int position) {
         return super.getItem(position);
     }
 

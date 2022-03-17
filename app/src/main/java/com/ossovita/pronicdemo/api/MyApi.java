@@ -1,9 +1,8 @@
 package com.ossovita.pronicdemo.api;
 
 import com.ossovita.pronicdemo.model.Field;
-import com.ossovita.pronicdemo.model.Order;
+import com.ossovita.pronicdemo.model.OrderData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -15,6 +14,6 @@ public interface MyApi {
     Call<List<Field>> getAllFields();
 
     @GET("/api/1.0/order-datas")
-    Call<List<Order>> getAllOrderDatas();
+    Call<List<OrderData>> getAllOrderDatas();
 
 }

@@ -10,7 +10,7 @@ import com.ossovita.pronicdemo.adapter.OrderListAdapter;
 import com.ossovita.pronicdemo.api.ApiService;
 import com.ossovita.pronicdemo.api.MyApi;
 import com.ossovita.pronicdemo.model.Field;
-import com.ossovita.pronicdemo.model.Order;
+import com.ossovita.pronicdemo.model.OrderData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     ListView listView;
-    List<Order> orders = new ArrayList<>();
+    List<OrderData> orderData = new ArrayList<>();
     List<Field> fields = new ArrayList<>();
 
     @Override
@@ -43,14 +43,14 @@ public class MainActivity extends AppCompatActivity {
                     fields = response.body();
 
                     //get order list
-                    myApi.getAllOrderDatas().enqueue(new Callback<List<Order>>() {
+                    myApi.getAllOrderDatas().enqueue(new Callback<List<OrderData>>() {
                         @Override
-                        public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
+                        public void onResponse(Call<List<OrderData>> call, Response<List<OrderData>> response) {
                             if (response.isSuccessful()) {
                                 Log.d(TAG, "onResponse: gelen order list" + response.body());
-                                orders = response.body();
-                                Log.d(TAG, "onResponse: giden orders: " + orders.size());
-                                OrderListAdapter orderListAdapter = new OrderListAdapter(MainActivity.this, orders, fields);
+                                orderData = response.body();
+                                Log.d(TAG, "onResponse: giden orders: " + orderData.size());
+                                OrderListAdapter orderListAdapter = new OrderListAdapter(MainActivity.this, orderData, fields);
                                 listView.setAdapter(orderListAdapter);
 
                             } else {
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<List<Order>> call, Throwable t) {
+                        public void onFailure(Call<List<OrderData>> call, Throwable t) {
                             Log.d(TAG, "onFailure: error orders:" + t.getMessage());
                         }
                     });
