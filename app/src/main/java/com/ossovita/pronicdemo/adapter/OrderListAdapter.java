@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 
 import com.ossovita.pronicdemo.R;
 import com.ossovita.pronicdemo.model.Field;
+import com.ossovita.pronicdemo.model.Item;
 import com.ossovita.pronicdemo.model.Order;
 
 import java.util.Collections;
@@ -86,8 +87,8 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                 for (int i = 0; i < weightArray.length; i++) {
                     Log.d(TAG, "getView: weightArray:" + i + " numaralı indexte " + weightArray[i] + " adet eleman var");
                 }
-                Log.d(TAG, "getView: max row:" + element.getRowNumber());
 
+                Log.d(TAG, "getView: max row:" + element.getRowNumber());
 
                 //Create horizontal linear layouts for max row number count & add these horizontal linear layouts into root vertical linear layout
                 for (int i = 0; i < element.getRowNumber(); i++) {
@@ -106,29 +107,25 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
                     TextView textView = new TextView(getContext());
                     textView.setTextColor(Color.parseColor(field.getColor()));
                     textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
+                    //Dataları doldurma zamanı
+                    for (Item item : order.getItemList()) {
 
-                    //setText
-                    if (field.getType().equals("Static")) {
-                        textView.setText(field.getName());
-                    } else if (field.getType().equals("Data")) {
-                        switch (field.getName()) {
-                            case "ORDERNO":
-                                textView.setText(String.valueOf(order.getOrderNo()));
-                                break;
-                            case "DATE":
-                                textView.setText(String.valueOf(order.getOrderTime()));
-                                break;
-                            case "CLIENTINFO":
-                                textView.setText(String.valueOf(order.getClientInfo()));
-                                break;
-                            case "ORDERPRICE":
-                                textView.setText(String.valueOf(order.getOrderPrice()));
-                                break;
+                        if (field.getType().equals("Static")) {
+                            textView.setText(field.getName());
+                        } else if (field.getType().equals("Data")) {
+                            if (field.getName().equals(item.getName())) {
+                                Object value = item.getValue();
+                                if (value instanceof Double) {
+                                    value = ((Double) value).intValue();
+                                }
+                                textView.setText(String.valueOf(value));
+                            }
                         }
                     }
                     //Set text view layout weight
                     textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 10f / weightArray[field.getRowNumber() - 1]));
                     Log.d(TAG, "getView: vertical layout child number:" + holder.verticalLinearLayout.getChildCount());
+
                     //Add textViews into related horizontal linear layout
                     LinearLayout horizontalLinearLayout = (LinearLayout) holder.verticalLinearLayout.getChildAt(field.getRowNumber() - 1);
                     System.out.println("addView linearLayout:" + horizontalLinearLayout);
@@ -166,8 +163,4 @@ public class OrderListAdapter extends ArrayAdapter<Order> {
         return super.getItem(position);
     }
 
-    @Override
-    public long getItemId(int position) {
-        return orders.get(position).getOrderPk();
-    }
 }

@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                     fields = response.body();
 
                     //get order list
-                    myApi.getAllOrders().enqueue(new Callback<List<Order>>() {
+                    myApi.getAllOrderDatas().enqueue(new Callback<List<Order>>() {
                         @Override
                         public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                             if (response.isSuccessful()) {

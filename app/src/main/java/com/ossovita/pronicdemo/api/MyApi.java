@@ -14,7 +14,7 @@ public interface MyApi {
     @GET("/api/1.0/fields")
     Call<List<Field>> getAllFields();
 
-    @GET("/api/1.0/orders")
-    Call<List<Order>> getAllOrders();
+    @GET("/api/1.0/order-datas")
+    Call<List<Order>> getAllOrderDatas();
 
 }
