@@ -101,11 +101,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                             textView.setText(field.getName());
                         } else if (field.getType().equals("Data")) {
                             if (field.getName().equals(item.getName())) {
-                                /*//format date
-                                if (field.getName().equals("DATE")) {
-                                    Object value = item.getValue();
-                                    Log.d(TAG, "getView: formatlanacak tarih:" + value);
-                                }*/
+
                                 Object value = item.getValue();
                                 if (value instanceof Double) {
                                     value = ((Double) value).intValue();

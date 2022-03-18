@@ -8,7 +8,6 @@ import java.util.List;
 public class OrderData {
 
     @SerializedName("itemList")
-    @Expose
     private List<Item> itemList = null;
 
     public List<Item> getItemList() {

@@ -7,10 +7,9 @@ public class Item {
 
 
     @SerializedName("name")
-    @Expose
     private String name;
+
     @SerializedName("value")
-    @Expose
     private Object value;
 
     public String getName() {
