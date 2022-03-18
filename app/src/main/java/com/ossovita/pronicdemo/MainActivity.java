@@ -9,11 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.ossovita.pronicdemo.adapter.OrderListAdapter;
 import com.ossovita.pronicdemo.api.ApiService;
 import com.ossovita.pronicdemo.api.MyApi;
-import com.ossovita.pronicdemo.model.Item;
 import com.ossovita.pronicdemo.model.Order;
-import com.ossovita.pronicdemo.model.OrderData;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,20 +42,15 @@ public class MainActivity extends AppCompatActivity {
                     fields = response.body();
 
                     //get order list
-                    myApi.getAllOrderDatas().enqueue(new Callback<List<com.ossovita.pronicdemo.model.Order>>() {
+                    myApi.getAllOrders().enqueue(new Callback<List<com.ossovita.pronicdemo.model.Order>>() {
                         @Override
                         public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                             if (response.isSuccessful()) {
                                 Log.d(TAG, "onResponse: gelen order list" + response.body());
                                 orderList = response.body();
                                 Log.d(TAG, "onResponse: giden orders: " + orderList.size());
-                                try {
-                                    List<OrderData> orderDataList = fetchOrderDataList(orderList);
-                                    OrderListAdapter orderListAdapter = new OrderListAdapter(MainActivity.this, orderDataList, fields);
-                                    listView.setAdapter(orderListAdapter);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                }
+                                OrderListAdapter orderListAdapter = new OrderListAdapter(MainActivity.this, orderList, fields);
+                                listView.setAdapter(orderListAdapter);
 
 
                             } else {
@@ -84,27 +76,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public List<OrderData> fetchOrderDataList(List<Order> orders) throws IllegalAccessException {
-
-        List<OrderData> orderDataList = new ArrayList<>();
-
-        for (Order order : orders) {
-            List<Item> itemList = new ArrayList<>();
-            for (Field field : order.getClass().getDeclaredFields()) {
-                field.setAccessible(true); // You might want to set modifier to public first.
-                Object value = field.get(order);
-                if (value != null) {
-                    System.out.println(field.getName() + "=" + value);
-                    Item item = new Item(field.getName().toUpperCase(), value);
-                    itemList.add(item);
-                }
-            }
-            OrderData orderData = new OrderData(itemList);
-            orderDataList.add(orderData);
-        }
-
-        return orderDataList;
-    }
 
     @Override
     protected void onResume() {
