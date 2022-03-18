@@ -132,6 +132,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
     }
 
     private LinearLayout createHorizontalLinearLayout() {
+
         LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
