@@ -16,20 +16,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.JsonObject;
 import com.ossovita.pronicdemo.R;
 import com.ossovita.pronicdemo.model.Field;
-import com.ossovita.pronicdemo.model.Item;
-import com.ossovita.pronicdemo.model.OrderData;
+import com.ossovita.pronicdemo.model.Order;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class OrderListAdapter extends ArrayAdapter<OrderData> {
+public class OrderListAdapter extends ArrayAdapter<Order> {
 
     private static final String TAG = "OrderListAdapter";
     private Context context;
-    private List<OrderData> orderData;
+    private List<JsonObject> orders;
     private List<Field> fields;
     private ViewHolder holder;
 
@@ -37,12 +37,12 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
         public LinearLayout verticalLinearLayout;
     }
 
-    public OrderListAdapter(@NonNull Context context, List<OrderData> orderData, List<Field> fields) {
-        super(context, R.layout.adapter_view_layout, orderData);
+    public OrderListAdapter(@NonNull Context context, List<JsonObject> orders, List<Field> fields) {
+        super(context, R.layout.adapter_view_layout);
         this.context = context;
-        this.orderData = orderData;
+        this.orders = orders;
         this.fields = fields;
-        Log.d(TAG, "OrderListAdapter: kullanılacak fields:" + fields.size() + " orders: " + orderData.size());
+        Log.d(TAG, "OrderListAdapter: kullanılacak fields:" + fields.size() + " orders: " + orders.size());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -64,8 +64,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
             holder.verticalLinearLayout.setLayoutParams(verticalLayoutParams);
             holder.verticalLinearLayout.setWeightSum(10f);
 
-
-            OrderData orderData = this.orderData.get(position);
+            JsonObject orderData = this.orders.get(position);
 
             if (orderData != null) {
 
@@ -95,20 +94,12 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                     TextView textView = new TextView(getContext());
                     textView.setTextColor(Color.parseColor(field.getColor()));
                     textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
-                    //Dataları doldurma zamanı
-                    for (Item item : orderData.getItemList()) {
-                        if (field.getType().equals("Static")) {
-                            textView.setText(field.getName());
-                        } else if (field.getType().equals("Data")) {
-                            if (field.getName().equals(item.getName())) {
 
-                                Object value = item.getValue();
-                                if (value instanceof Double) {
-                                    value = ((Double) value).intValue();
-                                }
-                                textView.setText(String.valueOf(value));
-                            }
-                        }
+                    if (field.getType().equals("Static")) {
+                        textView.setText(field.getName());
+
+                    } else if (field.getType().equals("Data")) {
+                        textView.setText(orderData.get(field.getName()).getAsString());
                     }
 
 
@@ -132,7 +123,6 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
     }
 
     private LinearLayout createHorizontalLinearLayout() {
-
         LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -147,7 +137,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
 
     @Override
     public int getCount() {
-        return orderData.size();
+        return orders.size();
     }
 
     @Override
@@ -162,7 +152,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
 
     @Nullable
     @Override
-    public OrderData getItem(int position) {
+    public Order getItem(int position) {
         return super.getItem(position);
     }
 

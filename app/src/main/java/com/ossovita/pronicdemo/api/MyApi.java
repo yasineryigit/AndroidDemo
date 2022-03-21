@@ -1,7 +1,7 @@
 package com.ossovita.pronicdemo.api;
 
+import com.google.gson.JsonObject;
 import com.ossovita.pronicdemo.model.Field;
-import com.ossovita.pronicdemo.model.OrderData;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface MyApi {
     @GET("/api/1.0/fields")
     Call<List<Field>> getAllFields();
 
-    @GET("/api/1.0/order-datas")
-    Call<List<OrderData>> getAllOrderDatas();
+    @GET("/api/1.0/orders")
+    Call<List<JsonObject>> getAllOrders();
 
 }
