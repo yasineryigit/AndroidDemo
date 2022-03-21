@@ -6,10 +6,10 @@ import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.JsonObject;
 import com.ossovita.pronicdemo.adapter.OrderListAdapter;
 import com.ossovita.pronicdemo.api.ApiService;
 import com.ossovita.pronicdemo.api.MyApi;
-import com.ossovita.pronicdemo.model.Order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     ListView listView;
-    List<Order> orderList = new ArrayList<>();
+    List<JsonObject> orderList = new ArrayList<JsonObject>();
     List<com.ossovita.pronicdemo.model.Field> fields = new ArrayList<>();
 
     @Override
@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
                     fields = response.body();
 
                     //get order list
-                    myApi.getAllOrders().enqueue(new Callback<List<com.ossovita.pronicdemo.model.Order>>() {
+                    myApi.getAllOrders().enqueue(new Callback<List<JsonObject>>() {
                         @Override
-                        public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
+                        public void onResponse(Call<List<JsonObject>> call, Response<List<JsonObject>> response) {
                             if (response.isSuccessful()) {
                                 Log.d(TAG, "onResponse: gelen order list" + response.body());
                                 orderList = response.body();
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(Call<List<Order>> call, Throwable t) {
-                            Log.d(TAG, "onFailure: error orders:" + t.getMessage());
+                        public void onFailure(Call<List<JsonObject>> call, Throwable t) {
+
                         }
                     });
 

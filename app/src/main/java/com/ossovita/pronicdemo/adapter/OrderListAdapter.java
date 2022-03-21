@@ -16,20 +16,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.google.gson.JsonObject;
 import com.ossovita.pronicdemo.R;
 import com.ossovita.pronicdemo.model.Field;
 import com.ossovita.pronicdemo.model.Order;
-import com.ossovita.pronicdemo.model.OrderData;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class OrderListAdapter extends ArrayAdapter<OrderData> {
+public class OrderListAdapter extends ArrayAdapter<Order> {
 
     private static final String TAG = "OrderListAdapter";
     private Context context;
-    private List<Order> orders;
+    private List<JsonObject> orders;
     private List<Field> fields;
     private ViewHolder holder;
 
@@ -37,7 +37,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
         public LinearLayout verticalLinearLayout;
     }
 
-    public OrderListAdapter(@NonNull Context context, List<Order> orders, List<Field> fields) {
+    public OrderListAdapter(@NonNull Context context, List<JsonObject> orders, List<Field> fields) {
         super(context, R.layout.adapter_view_layout);
         this.context = context;
         this.orders = orders;
@@ -64,8 +64,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
             holder.verticalLinearLayout.setLayoutParams(verticalLayoutParams);
             holder.verticalLinearLayout.setWeightSum(10f);
 
-
-            Order orderData = this.orders.get(position);
+            JsonObject orderData = this.orders.get(position);
 
             if (orderData != null) {
 
@@ -95,18 +94,12 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                     TextView textView = new TextView(getContext());
                     textView.setTextColor(Color.parseColor(field.getColor()));
                     textView.setTypeface(null, field.isBold() ? Typeface.BOLD : Typeface.NORMAL);
-                    //Dataları doldurma zamanı
-                    for (java.lang.reflect.Field f : orders.get(position).getClass().getDeclaredFields()) {
-                        f.setAccessible(true); // You might want to set modifier to public first.
-                        Log.d(TAG, "getView: karşılaştırılacak fieldName: "+ field.getName() + " f Name:" + f.getName().toUpperCase());
-                        if (field.getName().equals(f.getName().toUpperCase())) {
-                            try {
-                                Object value = f.get(orders.get(position));
-                                textView.setText(String.valueOf(value));
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
+
+                    if (field.getType().equals("Static")) {
+                        textView.setText(field.getName());
+
+                    } else if (field.getType().equals("Data")) {
+                        textView.setText(orderData.get(field.getName()).getAsString());
                     }
 
 
@@ -159,7 +152,7 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
 
     @Nullable
     @Override
-    public OrderData getItem(int position) {
+    public Order getItem(int position) {
         return super.getItem(position);
     }
 
