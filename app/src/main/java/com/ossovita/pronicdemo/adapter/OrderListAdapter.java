@@ -106,8 +106,6 @@ public class OrderListAdapter extends ArrayAdapter<OrderData> {
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
                             }
-
-
                         }
                     }
 
